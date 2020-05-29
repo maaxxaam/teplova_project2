@@ -1,8 +1,12 @@
 #trying to do some project calcs
 from sympy import *
+import matplotlib.pyplot as plt
+
 def fact(a):
     if a <= 1 : return 1
     else: return a*fact(a-1)
+R = list()
+X = [i for i in range(1,101)]
 for n in range (1, 5): 
     for l in range(n):
         for rc in range(1,11):
@@ -29,5 +33,24 @@ for n in range (1, 5):
                 return func(alpha, gamma, zeta, el)
                 
             Anl = 1/fact(2*l+1)*(fact(n+l)/(2*n*fact(n-l+1)))**0.5*(2*z/n)**1.5
-            Rnl = Anl * rho**l * e**(-beta*rho) * lagger(2*l+1,n+l,2*rho*beta)
-            print(Rnl)
+            R.append(Anl * rho**l * e**(-beta*rho) * lagger(2*l+1,n+l,2*rho*beta))
+            print(R[-1])
+fig, ax = plt.subplots(figsize=(6, 6))
+#fig, ay = plt.subplots(figsize=(6, 6))
+#fig, az = plt.subplots(figsize=(6, 6))
+ax.plot(X, R)
+ax.set_title('Движение маятника Фуко')
+ax.set_ylabel('Y')
+ax.set_xlabel('X')
+ax.set_yscale('symlog')
+'''ay.plot(t, x)
+ay.set_title('Движение маятника Фуко')
+ay.set_ylabel('X')
+ay.set_xlabel('t')
+az.plot(t, y)
+az.set_title('Движение маятника Фуко')
+az.set_ylabel('Y')
+az.set_xlabel('t')'''
+fig.tight_layout()
+print(R)
+plt.show()
