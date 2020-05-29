@@ -9,8 +9,9 @@ eps = 1
 E0 = 27.07
 E = 28
 eps = -E/E0
-beta = (2*eps)**0.5
 z = 1
+beta = z/n
+rho = 1
 e = 1.6*10**(-19)
 a = 0.529
 def lagger(al, ga, ze):
@@ -25,4 +26,5 @@ Calculates Lagger's polinominal. Takes three arguments: alpha, gamma and zeta
     return func(alpha, gamma, zeta, el)
     
 Anl = 1/fact(2*l+1)*(fact(n+l)/(2*n*fact(n-l+1)))**0.5*(2*z/n)**1.5
-print(lagger(1,1,1))
+Rnl = Anl * rho**l * e**(-beta*rho) * lagger(2*l+1,n+l,2*rho*beta)
+print(Rnl)
