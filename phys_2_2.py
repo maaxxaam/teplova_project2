@@ -35,12 +35,13 @@ for n in range (1, 5):
             e = 1.6*10**(-19)
             Anl = 1/fact(2*l+1)*(fact(n+l)/(2*n*fact(n-l+1)))**0.5*(2*z/n)**1.5
             R.append(Anl * rho**l * e**(-beta*rho) * lagger(2*l+1,n+l,2*rho*beta))
+            R[-1] = R[-1]**2
             print(R[-1])
         fig, ax = plt.subplots(figsize=(6, 6))
         #fig, ay = plt.subplots(figsize=(6, 6))
         #fig, az = plt.subplots(figsize=(6, 6))
         ax.plot(X[dec*10:dec*10+10], R[dec*10:dec*10+10])
-        ax.set_title('Радиальная функция при n = '+str(n)+' и l = '+str(l))
+        ax.set_title('Квадрат радиальной функция при n = '+str(n)+' и l = '+str(l))
         ax.set_ylabel('R(rho)')
         ax.set_xlabel('r*10**(-13)')
         ax.set_yscale('symlog')
