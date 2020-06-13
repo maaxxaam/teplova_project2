@@ -17,7 +17,7 @@ Calculates Lagger's polinominal. Takes three arguments: alpha, gamma and zeta
     return func(alpha, gamma, zeta, el)
                 
 R = list()
-X = [i for i in range(1,101)]
+X = [(i-1)%10+1 for i in range(1,101)]
 dec = 0
 for n in range (1, 5): 
     for l in range(n):
