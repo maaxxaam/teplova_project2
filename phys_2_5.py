@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 def fact(a):
     if a <= 1 : return 1
     else: return a*fact(a-1)
-def lagger(al, ga, ze):
+def legandra(me, ee, cosTheta, l):
     '''
-Calculates Lagger's polinominal. Takes three arguments: alpha, gamma and zeta
+Calculates Legander's polinominal. Takes four arguments: m, e, cos(theta) and l
     '''
-    el = 1.6*10**(-19)
-    alpha, gamma, zeta, ele = symbols('alpha gamma zeta ele')
-    expr = diff(ele**zeta * diff(zeta**gamma * ele**(-zeta), zeta, ga), zeta, al)
-    func = lambdify(['alpha','gamma','zeta','ele'],expr)
-    alpha, gamma, zeta, ele = al, ga, ze, el
-    return func(alpha, gamma, zeta, el)
+    cosTh, m, le, ele = symbols('cosTh m le ele')
+    expr = (1 - cosTh**2)**(Abs(m)/2)*diff(1/((2**le)*factorial(le))*diff((cosTh**2 - 1)**le, cosTh, l), cosTh, abs(me))
+    print(expr)
+    func = lambdify(['cosTh','m','le','ele'],expr)
+    cosTh, m, le, ele = cosTheta, me, l, ee
+    return func(cosTh, m, le, ele)
 eps = 1
 E0 = 27.07
 E = 28
@@ -26,7 +26,7 @@ e = 1.6*10**(-19)
 R = list()
 X = [(i-1)%10+1 for i in range(1,101)]
 dec = 0
-for n in range (1, 5): 
+'''for n in range (1, 5): 
     for l in range(n):
         for rc in range(1,11):
             r = rc*10**(-13)
@@ -44,15 +44,16 @@ for n in range (1, 5):
         ax.set_ylabel('R(rho)')
         ax.set_xlabel('r*10**(-13)')
         ax.set_yscale('symlog')
-        '''ay.plot(t, x)
+        '''''''ay.plot(t, x)
         ay.set_title('Движение маятника Фуко')
         ay.set_ylabel('X')
         ay.set_xlabel('t')
         az.plot(t, y)
         az.set_title('Движение маятника Фуко')
         az.set_ylabel('Y')
-        az.set_xlabel('t')'''
+        az.set_xlabel('t')''''''
         fig.tight_layout()
         print(R)
         dec += 1
-plt.show()
+plt.show()'''
+print(legandra(1,1,0.5,1))
