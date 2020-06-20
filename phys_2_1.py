@@ -25,15 +25,13 @@ X = [((i - 1) % 100 + 1) / 10 for i in range(1, 1001)]
 dec = 0
 
 
-def lagger(al, ga, ze):
+def lagger(al, ga):
     """
 Calculates Lagger's polinominal. Takes three arguments: alpha, gamma and zeta
     """
     alpha, gamma, zeta = symbols('alpha gamma zeta')
     expr = diff(exp(zeta) * diff(zeta ** gamma * exp(-zeta), zeta, ga), zeta, al)
-    func = lambdify(['alpha', 'gamma', 'zeta'], expr)
-    alpha, gamma, zeta = al, ga, ze
-    return func(alpha, gamma, zeta)
+    return simplify(expr.subs({'alpha': al, 'gamma': ga}))  #
 
 
 def En(n):
@@ -44,11 +42,12 @@ for n in range(2, 3):
     eps = -En(n) / E0
     beta = (2 * eps) ** (1 / 2)  # z/n
     for l in range(1, 2):
-        for rc in range(1, 101):
-            print(n, l, rc)
-            rho = rc / 10
-            Anl = (1 / fact(2 * l + 1)) * (fact(n + l) / (2 * n * fact(n - l - 1))) ** 0.5 * (2 * z / n) ** 1.5
-            R.append(Anl * (rho ** l) * math.exp(-beta * rho) * lagger(2 * l + 1, n + l, 2 * rho * beta))
+        lagg = lagger(2 * l + 1, n + l)
+        Anl = 1 / fact(2 * l + 1) * (fact(n + l) / (2 * n * fact(n - l - 1))) ** 0.5 * (2 * z / n) ** 1.5
+        for rho in range(1, 101):
+            print(n, l, rho)
+            R.append(Anl * ((rho/10) ** l) * math.exp(-beta * rho/10) * float(
+                lagg.evalf(subs={'alpha': 2 * l + 1, 'gamma': n + l, 'zeta': 2 * rho * beta/10})))
             print(R[-1])
         fig, ax = plt.subplots(figsize=(6, 6))
         ax.plot(X[dec * 100:dec * 100 + 100], R[dec * 100:dec * 100 + 100])

@@ -1,8 +1,9 @@
 # trying to do some project calcs
 from sympy import *
 import matplotlib.pyplot as plt
-from math import pi, cos, radians
-from cmath import exp
+from math import radians
+import math
+import cmath
 
 
 def fact(a):
@@ -12,16 +13,13 @@ def fact(a):
         return a*fact(a-1)
 
 
-def legandra(me, cosTheta, l):
+def legandra(me, l):
     """
 Calculates Legander's polinominal. Takes four arguments: m, cos(theta) and l
     """
     cosTh, m, le = symbols('cosTh m le')
     expr = (1 - cosTh**2)**(Abs(m)/2)*diff(1/((2**le)*factorial(le))*diff((cosTh**2 - 1)**le, cosTh, l), cosTh, abs(me))
-    # print(expr)
-    func = lambdify(['cosTh', 'm', 'le'], expr)
-    cosTh, m, le = cosTheta, me, l
-    return func(cosTh, m, le)
+    return simplify(expr.subs({'m': me, 'le': l}))
 
 
 eps = 1
@@ -35,9 +33,13 @@ e = 1.6*10**(-19)
 Y = [0 for i in range(361)]
 dec = 0
 l = 3
-m = 0
+m = 2
 phi = 1
 theta = 0.5
+legander = legandra(m, l)
+# legander = legander.evalf(subs={'m': m, 'le': l, 'cosTh': symbols('cosTh')})
+print(legander)
+coeff = ((fact(l - abs(m)) * (2 * l + 1) / (fact(l + abs(m)) * 4 * math.pi)) ** (1 / 2))
 for angle in range(361):
     phi = radians(angle)
     theta = radians(angle)
@@ -45,7 +47,8 @@ for angle in range(361):
     if angle % 180 == 0:
         Y[angle] = Y[angle-1]
         continue
-    spher = ((fact(l-abs(m))*(2*l+1)/(fact(l+abs(m))*4*pi))**(1/2)*legandra(m, cos(theta), l)*exp((1j)*m*phi))
+    spher = complex(legander.evalf(subs={'cosTh': math.cos(theta), 'm': m, 'le': l})) * \
+        coeff * cmath.exp(1j * m * phi)
     Y[angle] = (spher.imag**2+spher.real**2)
 # fig, ax = plt.subplots(figsize=(6, 6))
 # ax = fig.add_subplot( projection='polar')
