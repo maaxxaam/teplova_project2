@@ -1,65 +1,78 @@
+from typing import List
+
 from sympy import *
 import matplotlib.pyplot as plt
+from math import radians
+import cmath
+import math
 
-def fact(a):
-    if a <= 1 : return 1
-    else: return a*fact(a-1)
-def lagger(al, ga, ze):
-    '''
+
+def fact(num):
+    if num <= 1:
+        return 1
+    else:
+        return num * fact(num - 1)
+
+
+def lagger(al, ga):
+    """
 Calculates Lagger's polinominal. Takes three arguments: alpha, gamma and zeta
-    '''
+    """
     alpha, gamma, zeta = symbols('alpha gamma zeta')
-    expr = diff(exp(zeta) * diff(zeta**gamma * exp(-zeta), zeta, ga), zeta, al)
-    func = lambdify(['alpha','gamma','zeta'],expr)
-    alpha, gamma, zeta = al, ga, ze
-    return func(alpha, gamma, zeta)
-def legandra(me, ee, cosTheta, l):
-    '''
-Calculates Legander's polinominal. Takes four arguments: m, e, cos(theta) and l
-    '''
-    cosTh, m, le, ele = symbols('cosTh m le ele')
-    expr = (1 - cosTh**2)**(Abs(m)/2)*diff(1/((2**le)*factorial(le))*diff((cosTh**2 - 1)**le, cosTh, l), cosTh, abs(me))
-    func = lambdify(['cosTh','m','le','ele'],expr)
-    cosTh, m, le, ele = cosTheta, me, l, ee
-    return func(cosTh, m, le, ele)
-eps = 1
+    expr = diff(exp(zeta) * diff(zeta ** gamma * exp(-zeta), zeta, ga), zeta, al)
+    return simplify(expr)  #
+
+
+def legandra(me, l):
+    """
+Calculates Legander's polinominal. Takes four arguments: m, cos(theta) and l
+    """
+    cosTh, m, le = symbols('cosTh m le')
+    expr = (1 - cosTh ** 2) ** (Abs(m) / 2) * diff(
+        1 / ((2 ** le) * factorial(le)) * diff((cosTh ** 2 - 1) ** le, cosTh, l), cosTh, abs(me))
+    return simplify(expr)
+
+
+def En(n):
+    return (-(me * (e ** 4) * (z ** 2)) / ((4 * pi * e0) ** 2 * (2 * n ** 2 * h ** 2))) / e
+
+
+e0 = 8.854187817e-12
 E0 = 27.07
-E = 28
-eps = -E/E0
-plank = 4.1*10**(-15) #i>k, i>=2, k>=1
+plank = 4.1e-15  # i>k, i>=2, k>=1
 z = 1
-a = 0.529 * 10**(-10)
-e = 1.6*10**(-19)
+me = 9.1e-31
+a = 0.529
+h = 1.05e-34
+e = 1.602176634e-19
+E = 28
 Y = [0 for i in range(361)]
 dec = 0
-l = 3
-m = 2
+l = 2
+m = -2
+n = 3
 R = list()
-final = list()
+eps = -En(n) / E0
+beta = (2 * eps) ** (1 / 2)  # z/n
+final = [i for i in range(360)]
+me, cosTheta, le = symbols('me cosTheta l')
+legander = legandra(m, l)
+lagg = lagger(2*l+1, n+l)
 for angle in range(361):
     phi = radians(angle)
     theta = radians(angle)
     print(angle)
-    if (angle%180==0):continue
-    spher = ((fact(l-abs(m))*(2*l+1)/(fact(l+abs(m))*4*pi))**(1/2)*legandra(m,e,cos(theta),l)*exp((1j)*m*phi))
-    Y[angle] = (spher.imag**2+spher.real**2)
-        for rc in range(1,11):
-            r = rc*10**(-13)
-            print(n, l, rc)
-            beta = z/n
-            rho = r/a
-            Anl = 1/fact(2*l+1)*(fact(n+l)/(2*n*fact(n-l+1)))**0.5*(2*z/n)**1.5
-            R.append(Anl * rho**l * e**(-beta*rho) * lagger(2*l+1,n+l,2*rho*beta))
-            print(R[-1])
-fig, ax = plt.subplots(figsize=(6, 6))
-ax = fig.add_subplot( projection='polar')
-ax.plot([radians(i) for i in range(361)],Y)
-#ax.plot(X,Y)
-ax.set_title('ХЗ')
-ax.set_ylabel('R(rho)')
-ax.set_xlabel('r*10**(-13)')
-#ax.set_yscale('symlog')
-fig.tight_layout()
-plt.show()
-print(spher)
+    if angle % 180 == 0:
+        continue
+    spher = float(legander.evalf(subs={'cosTh': math.cos(theta), 'm': m, 'le': l})) * \
+        ((fact(l - abs(m)) * (2 * l + 1) / (fact(l + abs(m)) * 4 * math.pi)) ** (1 / 2) * cmath.exp(1j * m * phi))
+    Y[angle] = (spher.imag ** 2 + spher.real ** 2)
+for rc in range(1, 11):
+    print(n, l, rc)
+    rho = rc
+    Anl = (1 / fact(2 * l + 1)) * (fact(n + l) / (2 * n * fact(n - l - 1))) ** 0.5 * (2 * z / n) ** 1.5
+    R.append(Anl * (rho ** l) * math.exp(-beta * rho) * float(lagg.evalf(subs={'alpha': 2*l+1, 'gamma': n+l, 'zeta': 2*rho*beta})))
+    plt.polar([radians(i) for i in range(361)], [i * R[-1] for i in Y], label='Rho = ' + str(rho))
 
+plt.legend(loc='best')
+plt.show()
